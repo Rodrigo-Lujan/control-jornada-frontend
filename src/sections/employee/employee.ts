@@ -16,6 +16,12 @@ const refSchema = Yup.object({
   name: Yup.string()
 })
 
+// FK obligatoria: debe venir un objeto con id (null no es válido)
+const requiredRef = (message: string) =>
+  refSchema
+    .nullable()
+    .test('required-ref', message, (value) => !!value && value.id != null)
+
 export const EmployeeSchema = Yup.object({
   code: Yup.string().trim().required('El código es obligatorio').max(20, 'Máximo 20 caracteres'),
   name: Yup.string().trim().required('El nombre es obligatorio').max(200, 'Máximo 200 caracteres'),
@@ -35,14 +41,16 @@ export const EmployeeSchema = Yup.object({
   contractDate: Yup.string().default(''),
   contractEndDate: Yup.string().default(''),
 
-  gender: refSchema.required('El género es obligatorio').nullable(),
-  maritalStatus: refSchema.required('El estado civil es obligatorio').nullable(),
-  jobType: refSchema.required('El tipo de puesto es obligatorio').nullable(),
-  country: refSchema.required('La nacionalidad es obligatoria').nullable(),
-  branch: refSchema.required('La sede es obligatoria').nullable(),
-  commune: refSchema.required('La comuna es obligatoria').nullable(),
-  jobScheduler: refSchema.required('El horario es obligatorio').nullable(),
+  // FK obligatorias (NOT NULL): null dispara error
+  gender: requiredRef('El género es obligatorio'),
+  maritalStatus: requiredRef('El estado civil es obligatorio'),
+  jobType: requiredRef('El tipo de puesto es obligatorio'),
+  country: requiredRef('La nacionalidad es obligatoria'),
+  branch: requiredRef('La sede es obligatoria'),
+  commune: requiredRef('La comuna es obligatoria'),
+  jobScheduler: requiredRef('El horario es obligatorio'),
 
+  // FK opcional (NULL en BD)
   contractType: refSchema.nullable().default(null)
 })
 
