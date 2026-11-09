@@ -222,13 +222,14 @@ export default function EmployeeNewEditForm({ employeeId, onSuccess, onCancel }:
     <Controller
       name={name}
       control={control}
-      render={({ field }) => (
+      render={({ field, fieldState }) => (
         <EntitySelectField
           label={label}
           modalTitle={modalTitle}
           options={options}
           value={(field.value as { id: number; name?: string } | null) ?? undefined}
           required={required}
+          error={fieldState.error?.message}
           onChange={(opt) => field.onChange(opt)}
         />
       )}
